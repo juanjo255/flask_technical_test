@@ -1,33 +1,17 @@
-from flask import Flask, render_template, request
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, request
+from models.models import *
 from flask_migrate import Migrate
 
 app = Flask(__name__)
 # conexion a postgress
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:5433/mydb"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:2020@localhost:5433/mydb"
+# debug para no tener que correr en cada cambio
+app.config['DEBUG'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-
-class weatherModel(db.Model):
-    __tablename__ = 'weather'
-
-    id = db.Column(db.Integer, primary_key=True)
-    city = db.Column(db.String())
-    temp_hi = db.Column(db.Integer())
-    temp_lo = db.Column(db.Integer())
-    prcp = db.Column(db.Float())
-    date = db.Column (db.Date())
-    
-    def __init__(self, city, temp_hi, temp_lo, prcp, date):
-        self.city = city
-        self.temp_hi = temp_hi
-        self.temp_lo = temp_lo
-        self.prcp = prcp
-        self.date = date
-        
-    def __repr__(self):
-        return f"<Car {self.name}>"
+db.init_app(app)
+migrate = Migrate()
+migrate.init_app(app, db)
 
 @app.route("/")
 def index():
@@ -37,7 +21,6 @@ def index():
 def update():
   print ("datos recibidos", request.get_data())
   return "enviado"
-
 
 if __name__ == "__main__":
   app.run(debug=True)
