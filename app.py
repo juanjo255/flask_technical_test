@@ -10,17 +10,17 @@ app.config['DEBUG'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
-migrate = Migrate()
-migrate.init_app(app, db)
+migrate = Migrate(app, db)
 
-@app.route("/")
-def index():
-  return {"nombre":"juan"}
+@app.route("/login", methods=["POST"])
+def login():
+  if request.method == "POST":
+    data = request.get_json()
+    print (data)
+    if data and not ("" in data.values()):
+      print (userModel.query.filter_by(identification=data[identification]) )
+    return data
 
-@app.route("/update", methods= ["POST"])
-def update():
-  print ("datos recibidos", request.get_data())
-  return "enviado"
 
 if __name__ == "__main__":
   app.run(debug=True)

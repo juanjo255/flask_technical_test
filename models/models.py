@@ -5,10 +5,10 @@ db = SQLAlchemy()
 class userModel(db.Model):
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer, primary_key=True)
-    identification = db.Column(db.String(), unique=True, nullable=False)
+    #id = db.Column(db.Integer, primary_key=True)
+    identification = db.Column(db.String(), unique=True, nullable=False,primary_key=True)
     email = db.Column(db.String(), unique=True, nullable=False)
-    cellphone = db.Column(db.Integer(), unique=True, nullable=False)
+    cellphone = db.Column(db.String(), unique=True, nullable=False)
     password = db.Column (db.String(), nullable=False)
     userType= db.Column (db.String(), nullable=False)
     
@@ -18,6 +18,7 @@ class userModel(db.Model):
         self.cellphone= cellphone
         self.password= password
         self.userType= userType
+      
         
     def __repr__(self):
         return f"<User {self.identification}>"
