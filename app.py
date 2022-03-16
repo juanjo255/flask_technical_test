@@ -60,7 +60,7 @@ def createDoctorUser():
   if request.method == "POST":
     header = request.headers.get("Authorization")
     data = jwt.decode(header, "secret" ,algorithms=["HS256"])
-    if data ["userType"].upper() == "HOSPITAL" and data and not ("" in data.values()):
+    if data ["userType"].upper() == "HOSPITAL" and not ("" in data.values()):
       if not(searchUser(data)):
         createDoctorUser(data)
         return "Doctor user created"
