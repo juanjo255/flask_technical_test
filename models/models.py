@@ -70,15 +70,17 @@ class doctorUser(userModel):
     __mapper_args__ = {
         'polymorphic_identity': 'doctor'
     }
-
 class healthRecords():
     __tablename__ = "records"
     
     healthStatus= Column(String)
     observations= Column(String)
+    specialty= Column(String)
     
-    def __init__(self) -> None:
-        pass
+    def __init__(self, healthStatus, observations, specialty) -> None:
+        self.healthStatus= healthStatus
+        self.observations= observations
+        self.specialty= specialty
 
 mapper_registry.metadata.create_all(engine)
 #print (list(mapper_registry.metadata.sorted_tables))
