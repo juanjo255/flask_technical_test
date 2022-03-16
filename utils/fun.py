@@ -15,16 +15,20 @@ def createHospitalUser(data):
   session.add(user)
   session.commit()
   session.close()
+  return "done"
+  
 def createPatienteUser(data):
   session = Session(engine)
   user = patientUser(data["identification"], data["email"], data["cellphone"], data["password"], data["userType"],data["address"], data["birth"])
   session.add(user)
   session.commit()
   session.close()
+  return "done"
 
-def createDoctorUser (data):
+def addDoctorUser(data):
   session= Session(engine)
   user= doctorUser(data["identification"], data["email"], data["cellphone"], data["password"], data["userType"],data["address"], data["specialty"])
   session.add(user)
   session.commit()
   session.close()
+  return "done"

@@ -40,7 +40,6 @@ class userModel(base):
     
     def __repr__(self):
         return f"User {self.identification}"
-    
 class hospitalUser(userModel):
     
     service = Column (String)
@@ -51,7 +50,6 @@ class hospitalUser(userModel):
     __mapper_args__ = {
         'polymorphic_identity': 'hospital'
     }
-
 class patientUser(userModel):
     
     birth = Column(DateTime)
@@ -62,16 +60,25 @@ class patientUser(userModel):
     __mapper_args__= {
         'polymorphic_identity': 'patient'
     }
-
 class doctorUser(userModel):
     
     specialty = Column (String)
     
     def __init__(self, identification, email, cellphone, password, userType, address, specialty):
         super().__init__(identification, email, cellphone, password, userType, address)
-        self.service = specialty
+        self.specialty = specialty
     __mapper_args__ = {
         'polymorphic_identity': 'doctor'
     }
+
+class healthRecords():
+    __tablename__ = "records"
+    
+    healthStatus= Column(String)
+    observations= Column(String)
+    
+    def __init__(self) -> None:
+        pass
+
 mapper_registry.metadata.create_all(engine)
 #print (list(mapper_registry.metadata.sorted_tables))

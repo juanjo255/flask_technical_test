@@ -1,4 +1,3 @@
-from email import header
 from utils.fun import *
 from flask import Flask, request
 from models.models import *
@@ -58,11 +57,13 @@ def login():
 @app.route("/create-doctor", methods=["POST"])
 def createDoctorUser():
   if request.method == "POST":
-    header = request.headers.get("Authorization")
-    data = jwt.decode(header, "secret" ,algorithms=["HS256"])
-    if data ["userType"].upper() == "HOSPITAL" and not ("" in data.values()):
-      if not(searchUser(data)):
-        createDoctorUser(data)
+    token = request.headers.get("Authorization")
+    userHospitalData = jwt.decode(token, "secret" ,algorithms=["HS256"])
+    userDoctorData = request.get_json()
+    
+    if userHospitalData ["userType"].upper() == "HOSPITAL" and not ("" in userDoctorData.values()):
+      if not(searchUser(userDoctorData)):
+        addDoctorUser(userDoctorData)
         return "Doctor user created"
       
       return "doctor already registered"
