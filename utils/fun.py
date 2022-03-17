@@ -1,6 +1,7 @@
 from models.models import *
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+import jwt
 
 def searchUser(data):
   sqlcommand= select(userModel).where(userModel.identification == data["identification"] )
@@ -26,9 +27,21 @@ def createPatienteUser(data):
   return "done"
 
 def addDoctorUser(data):
+  
   session= Session(engine)
   user= doctorUser(data["identification"], data["email"], data["cellphone"], data["password"], data["userType"],data["address"], data["specialty"])
   session.add(user)
   session.commit()
   session.close()
   return "done"
+
+def createRecord(identification, data):
+  session= Session(engine)
+  user= healthRecords(identification, data["healthStatus"], data["observations"], data["specialty"])
+  session.add(user)
+  session.commit()
+  session.close()
+
+def getTokenData(token):
+  userData = jwt.decode(token, "secret" ,algorithms=["HS256"])
+  return userData

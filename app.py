@@ -1,22 +1,13 @@
 from utils.fun import *
 from flask import Flask, request
 from models.models import *
-import jwt
 
 app = Flask(__name__)
-# conexion a postgress
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:2020@localhost:5433/hospital"
+
 # debug para no tener que correr en cada cambio
 app.config['DEBUG'] = True
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Ruta de registro de usuarios
-# def searchUser(data):
-#   data = request.get_json()
-#   sqlcommand= select(userModel).where(userModel.identification == data["identification"] )
-#   session = Session(engine)
-#   result = session.scalars(sqlcommand).first()
-
+#RUTAS
 @app.route("/register", methods=["POST"])
 def register():
   if request.method == "POST":
@@ -58,7 +49,7 @@ def login():
 def createDoctorUser():
   if request.method == "POST":
     token = request.headers.get("Authorization")
-    userHospitalData = jwt.decode(token, "secret" ,algorithms=["HS256"])
+    userHospitalData = getTokenData(token)
     userDoctorData = request.get_json()
     
     if userHospitalData ["userType"].upper() == "HOSPITAL" and not ("" in userDoctorData.values()):
@@ -69,7 +60,16 @@ def createDoctorUser():
       return "doctor already registered"
     return "No authorized"
 
-@app.route("/record")
+@app.route("/record/<identification>", methods=["POST"])
+def createObservation (identification):
+  if request.method == "POST":
+    token = request.headers.get("Authorization")
+    userDoctorData = getTokenData(token)
+    if userDoctorData ["userType"].upper() == "DOCTOR":
+      data = request.get_json()
+      createRecord(identification, data)
+    
+  return "record created"
 
 if __name__ == "__main__":
   app.run(debug=True)

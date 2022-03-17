@@ -1,6 +1,7 @@
+from datetime import datetime
 from email.mime import base
 from xmlrpc.client import DateTime
-from sqlalchemy import Column, ForeignKey, String, create_engine, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, create_engine, DateTime
 from sqlalchemy.orm import registry
 from sqlalchemy.orm import relationship
 #from flask_sqlalchemy import SQLAlchemy
@@ -77,15 +78,19 @@ class doctorUser(userModel):
 class healthRecords(base):
     __tablename__ = 'records'
     
-    identification = Column (String, ForeignKey(userModel.identification), primary_key=True)
+    id = Column (Integer, primary_key=True)
+    identification = Column (String, ForeignKey(userModel.identification))
     healthStatus= Column(String)
     observations= Column(String)
     specialty= Column(String)
+    date = Column(DateTime)
     
-    def __init__(self, healthStatus, observations, specialty) -> None:
+    def __init__(self, identification ,healthStatus, observations, specialty) -> None:
+        self.identification=identification
         self.healthStatus= healthStatus
         self.observations= observations
         self.specialty= specialty
+        self.date= datetime.now()
 
 mapper_registry.metadata.create_all(engine)
 #print (list(mapper_registry.metadata.sorted_tables))
