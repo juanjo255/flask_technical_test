@@ -69,5 +69,7 @@ def createDoctorUser():
       return "doctor already registered"
     return "No authorized"
 
+@app.route("/record")
+
 if __name__ == "__main__":
   app.run(debug=True)

@@ -1,8 +1,9 @@
 from email.mime import base
 from xmlrpc.client import DateTime
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, String, create_engine, DateTime
+from sqlalchemy import Column, ForeignKey, String, create_engine, DateTime
 from sqlalchemy.orm import registry
+from sqlalchemy.orm import relationship
+#from flask_sqlalchemy import SQLAlchemy
 
 
 engine = create_engine("postgresql://postgres:2020@localhost:5433/hospital")
@@ -25,6 +26,9 @@ class userModel(base):
     password = Column (String, nullable=False)
     userType= Column (String, nullable=False)
     address= Column (String, nullable=False)
+    
+    # determinar one to many relationship and reverse
+    healthRecord= relationship("healthRecords", backref="users")
     
     def __init__(self, identification, email, cellphone, password, userType, address):
         self.identification= identification
@@ -70,9 +74,10 @@ class doctorUser(userModel):
     __mapper_args__ = {
         'polymorphic_identity': 'doctor'
     }
-class healthRecords():
-    __tablename__ = "records"
+class healthRecords(base):
+    __tablename__ = 'records'
     
+    identification = Column (String, ForeignKey(userModel.identification), primary_key=True)
     healthStatus= Column(String)
     observations= Column(String)
     specialty= Column(String)
