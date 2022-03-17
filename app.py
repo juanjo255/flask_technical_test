@@ -68,8 +68,8 @@ def createObservation (identification):
     if userDoctorData ["userType"].upper() == "DOCTOR":
       data = request.get_json()
       createRecord(identification, data)
-    
-  return "record created"
+      return "record created"
+    return "No authorized"
 
 if __name__ == "__main__":
   app.run(debug=True)

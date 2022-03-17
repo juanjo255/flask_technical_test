@@ -2,6 +2,8 @@ from models.models import *
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 import jwt
+import os
+
 
 def searchUser(data):
   sqlcommand= select(userModel).where(userModel.identification == data["identification"] )
@@ -43,5 +45,5 @@ def createRecord(identification, data):
   session.close()
 
 def getTokenData(token):
-  userData = jwt.decode(token, "secret" ,algorithms=["HS256"])
+  userData = jwt.decode(token, os.environ.get("SECRET_KEY_TOKEN") ,algorithms=["HS256"])
   return userData

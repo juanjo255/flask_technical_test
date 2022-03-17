@@ -4,10 +4,12 @@ from xmlrpc.client import DateTime
 from sqlalchemy import Column, ForeignKey, Integer, String, create_engine, DateTime
 from sqlalchemy.orm import registry
 from sqlalchemy.orm import relationship
-#from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
-engine = create_engine("postgresql://postgres:2020@localhost:5433/hospital")
+engine = create_engine(os.getenv("DATABASE_URL"))
 # registry es un objeto que contiene la metadata
 # esta metadata es toda la informacion de las tablas, ususarios y demas
 # aqui se agrupan todas las clases y se saca la clase base
