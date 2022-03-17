@@ -9,9 +9,9 @@ app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = "secret"
 
 #RUTAS
-@app.route("/")
-def index():
-  return "<h1>HOLA, PARECE QUE YA FUNCIONO</h1>"
+# @app.route("/")
+# def index():
+#  return "<h1>HOLA, PARECE QUE YA FUNCIONO</h1>"
 
 @app.route("/register", methods=["POST"])
 def register():
