@@ -8,6 +8,10 @@ app = Flask(__name__)
 app.config['DEBUG'] = True
 
 #RUTAS
+@app.route("/")
+def index():
+  return "HOLA, PARECE QUE YA FUNCIONO"
+
 @app.route("/register", methods=["POST"])
 def register():
   if request.method == "POST":
