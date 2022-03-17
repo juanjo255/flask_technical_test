@@ -9,7 +9,7 @@ import os
 
 load_dotenv()
 
-engine = create_engine(os.getenv("DATABASE_URL"))
+engine = create_engine("postgresql://postgres:2020@localhost:5433/hospital")
 # registry es un objeto que contiene la metadata
 # esta metadata es toda la informacion de las tablas, ususarios y demas
 # aqui se agrupan todas las clases y se saca la clase base
