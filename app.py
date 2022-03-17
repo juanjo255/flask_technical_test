@@ -10,7 +10,7 @@ app.config['DEBUG'] = True
 #RUTAS
 @app.route("/")
 def index():
-  return "HOLA, PARECE QUE YA FUNCIONO"
+  return "<h1>HOLA, PARECE QUE YA FUNCIONO</h1>"
 
 @app.route("/register", methods=["POST"])
 def register():
