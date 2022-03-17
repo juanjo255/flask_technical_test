@@ -6,6 +6,7 @@ app = Flask(__name__)
 
 # debug para no tener que correr en cada cambio
 app.config['DEBUG'] = True
+app.config['SECRET_KEY'] = "secret"
 
 #RUTAS
 @app.route("/")
