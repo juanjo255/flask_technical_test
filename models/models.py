@@ -1,7 +1,7 @@
 from datetime import datetime
 from email.mime import base
 from xmlrpc.client import DateTime
-from sqlalchemy import Column, ForeignKey, Integer, String, create_engine, DateTime
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, create_engine, DateTime
 from sqlalchemy.orm import registry
 from sqlalchemy.orm import relationship
 from dotenv import load_dotenv
@@ -9,16 +9,16 @@ import os
 
 load_dotenv()
 
-engine = create_engine("postgresql://postgres:2020@localhost:5433/hospital")
+engine = create_engine(os.getenv("DATABASE_URL"))
 # registry es un objeto que contiene la metadata
 # esta metadata es toda la informacion de las tablas, ususarios y demas
 # aqui se agrupan todas las clases y se saca la clase base
 mapper_registry = registry()
+
 # Todas las clases descienden de esta base
 base = mapper_registry.generate_base()
 # Los pasos de instaciar registry y sacar la clase base se pueden resumir a:
 # base = declarative_base()
-#db = SQLAlchemy()
 class userModel(base):
     __tablename__ = 'users'
     
@@ -69,11 +69,13 @@ class patientUser(userModel):
     }
 class doctorUser(userModel):
     
-    specialty = Column (String)
+    specialty= Column (String)
+    firstLogin= Column (Boolean)
     
     def __init__(self, identification, email, cellphone, password, userType, address, specialty):
         super().__init__(identification, email, cellphone, password, userType, address)
         self.specialty = specialty
+        self.firstLogin= True
     __mapper_args__ = {
         'polymorphic_identity': 'doctor'
     }

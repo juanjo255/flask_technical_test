@@ -9,7 +9,6 @@ def searchUser(data):
   sqlcommand= select(userModel).where(userModel.identification == data["identification"] )
   session = Session(engine)
   result = session.scalars(sqlcommand).first()
-  session.close()
   return result
 
 def createHospitalUser(data):

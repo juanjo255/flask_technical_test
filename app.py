@@ -1,5 +1,8 @@
+import re
+from sqlalchemy import update
 from utils.fun import *
-from flask import Flask, request
+from flask import Flask, redirect, request, session, url_for
+
 from models.models import *
 
 app = Flask(__name__)
@@ -9,9 +12,10 @@ app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = "secret"
 
 #RUTAS
-# @app.route("/")
-# def index():
-#  return "<h1>HOLA, PARECE QUE YA FUNCIONO</h1>"
+@app.route("/")
+def index():
+  return "<h1> mi API </h1>"
+  
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -36,13 +40,21 @@ def register():
       return res
     return "Bad data"
   
-@app.route("/login")
+@app.route("/login", methods=["POST"])
 def login():
   data = request.get_json()
   result = searchUser(data)
-  if result:
+  
+  if result and request.method == "POST":
+    
     res=""
     if result.password == data ["password"]:
+      
+      # Chekear si es el primer login del usuario doctor
+      # si lo es debe cambiar contraseña
+      if result.userType.upper() == "DOCTOR":
+        if result.firstLogin:
+          return redirect(url_for('changePassword', identification=result.identification))
       res = "user approved"
     else:
       res = "wrong password"
@@ -75,6 +87,19 @@ def createObservation (identification):
       createRecord(identification, data)
       return "record created"
     return "No authorized"
+
+@app.route("/changePassword", methods=["POST","GET"])
+def changePassword():
+  if request.method == "POST":
+    psw= request.get_json()
+    identification = request.args.get("identification")
+    session= Session(engine)
+    command= update(userModel).where(identification==userModel.identification).values({doctorUser.password:psw["password"], doctorUser.firstLogin:False})
+    session.execute(command)
+    session.commit()
+    session.close()
+    return "password changed"
+  return "<h1> change password endpoint </h1>"
 
 if __name__ == "__main__":
   app.run(debug=True)
