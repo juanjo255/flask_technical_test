@@ -6,7 +6,6 @@ from flask_mail import Message
 import jwt
 import os
 
-
 def searchUser(data):
   sqlcommand= select(userModel).where(userModel.identification == data["identification"] )
   session = Session(engine)
