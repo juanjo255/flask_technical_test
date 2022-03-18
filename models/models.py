@@ -9,7 +9,7 @@ import os
 
 load_dotenv()
 
-engine = create_engine(os.getenv("DATABASE_URL"))
+engine = create_engine("postgresql://alnhuxsolqytzh:6dcf58e023a0e79593f84235dbf078e875fdedf9f7acb6e4840e0b57e91fa940@ec2-3-222-204-187.compute-1.amazonaws.com:5432/dev2nagq33c5h0")
 # registry es un objeto que contiene la metadata
 # esta metadata es toda la informacion de las tablas, ususarios y demas
 # aqui se agrupan todas las clases y se saca la clase base

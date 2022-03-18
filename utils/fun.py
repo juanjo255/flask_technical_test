@@ -46,13 +46,12 @@ def createRecord(identification, data):
   session.close()
 
 def decodeTokenData(token):
-  userData = jwt.decode(token, os.environ.get("SECRET_KEY_TOKEN") ,algorithms=["HS256"])
+  userData = jwt.decode(token, "secret" ,algorithms=["HS256"])
   return userData
 
 def generateTokenEmail(email):
-  token = jwt.encode(email, os.environ.get("SECRET_KEY_TOKEN") ,algorithm="HS256")
+  token = jwt.encode(email, "secret" ,algorithm="HS256")
   return token
-  
 
 def sendEmail(mail, token, recipients):
   msg = Message("Account activation",
