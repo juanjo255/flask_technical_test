@@ -93,7 +93,10 @@ def createDoctorUser():
     if userHospitalData ["userType"].upper() == "HOSPITAL" and not ("" in userDoctorData.values()):
       if not(searchUser(userDoctorData)):
         addDoctorUser(userDoctorData)
-        return "Doctor user created"
+        token = generateTokenEmail({"email":userDoctorData["email"]})
+        # ENVIAR EMAIL de CONFIRMACION
+        sendEmail(mail, token, userDoctorData["email"])
+        return "Doctor user created, check email for activation"
       
       return "doctor already registered"
     return "No authorized"
@@ -106,12 +109,11 @@ def createObservation (identification):
       userDoctorData = decodeTokenData(token)
     except: 
       return "TOKEN MISSING"
-    
-    if userDoctorData ["userType"].upper() == "DOCTOR":
-      data = request.get_json()
+    data = request.get_json()
+    if userDoctorData ["userType"].upper() == "DOCTOR" and not ("" in data.values()):
       createRecord(identification, data)
-      return "record created"
-    return "No authorized"
+      return "Record created"
+    return "Bad data"
 
 @app.route("/changePassword", methods=["POST","GET"])
 def changePassword():
