@@ -29,6 +29,7 @@ class userModel(base):
     password = Column (String, nullable=False)
     userType= Column (String, nullable=False)
     address= Column (String, nullable=False)
+    confirmed = Column (Boolean)
     
     # determinar one to many relationship and reverse
     healthRecord= relationship("healthRecords", backref="users")
@@ -40,6 +41,7 @@ class userModel(base):
         self.password= password
         self.userType= userType
         self.address= address
+        self.confirmed= False
     
     __mapper_args__ = {
         'polymorphic_on': userType

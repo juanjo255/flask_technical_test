@@ -1,19 +1,32 @@
-import re
 from sqlalchemy import update
 from utils.fun import *
-from flask import Flask, redirect, request, session, url_for
-
+from flask import Flask, redirect, request, url_for
+from flask_mail import Mail
 from models.models import *
 
 app = Flask(__name__)
 
+
+
+
 # debug para no tener que correr en cada cambio
 app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = "secret"
+app.config['MAIL_SERVER']= "smtp.gmail.com"
+app.config ['MAIL_USE_TLS']= True
+app.config['MAIL_USERNAME'] = 'juanjosepikon05@gmail.com'
+app.config['MAIL_PASSWORD'] = "clave255"
+app.config['MAIL_PORT'] = "587"
+
+#inicializamos Mail para poder enviar correos
+mail = Mail(app)
 
 #RUTAS
 @app.route("/")
 def index():
+  #token = generateTokenEmail({"email":"p@gmail.com"})
+  # ENVIAR EMAIL de CONFIRMACION
+  #sendEmail(mail, token)
   return "<h1> mi API </h1>"
   
 
@@ -36,7 +49,11 @@ def register():
           createHospitalUser(data)
         else:
           createPatienteUser(data)
-        res= "user created"
+        
+        token = generateTokenEmail({"email":data["email"]})
+        # ENVIAR EMAIL de CONFIRMACION
+        sendEmail(mail, token, data["email"])
+        res= "user created, check your email for account activation"
       return res
     return "Bad data"
   
@@ -52,10 +69,13 @@ def login():
       
       # Chekear si es el primer login del usuario doctor
       # si lo es debe cambiar contraseña
-      if result.userType.upper() == "DOCTOR":
+      if not(result.confirmed):
+        return "You haven't confirmed your email"
+      elif result.userType.upper() == "DOCTOR":
         if result.firstLogin:
           return redirect(url_for('changePassword', identification=result.identification))
       res = "user approved"
+      
     else:
       res = "wrong password"
     return res
@@ -66,8 +86,11 @@ def login():
 def createDoctorUser():
   if request.method == "POST":
     token = request.headers.get("Authorization")
-    userHospitalData = getTokenData(token)
-    userDoctorData = request.get_json()
+    userHospitalData = decodeTokenData(token)
+    try:
+      userDoctorData = request.get_json()
+    except:
+      return "TOKEN MISSING"
     
     if userHospitalData ["userType"].upper() == "HOSPITAL" and not ("" in userDoctorData.values()):
       if not(searchUser(userDoctorData)):
@@ -81,7 +104,12 @@ def createDoctorUser():
 def createObservation (identification):
   if request.method == "POST":
     token = request.headers.get("Authorization")
-    userDoctorData = getTokenData(token)
+    
+    try:
+      userDoctorData = decodeTokenData(token)
+    except:
+      return "TOKEN MISSING"
+    
     if userDoctorData ["userType"].upper() == "DOCTOR":
       data = request.get_json()
       createRecord(identification, data)
@@ -100,6 +128,16 @@ def changePassword():
     session.close()
     return "password changed"
   return "<h1> change password endpoint </h1>"
+
+@app.route("/confirmation/<token>")
+def confirmation(token):
+  data = decodeTokenData(token)
+  session= Session(engine)
+  command= update(userModel).where(data["email"]==userModel.email).values(confirmed=True)
+  session.execute(command)
+  session.commit()
+  session.close()
+  return "<h1> YOUR ACCOUNT IS NOW ACTIVE </h1>"
 
 if __name__ == "__main__":
   app.run(debug=True)

@@ -1,6 +1,9 @@
+from http import server
 from models.models import *
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from flask_mail import Message
+#from smtplib import SMTP
 import jwt
 import os
 
@@ -43,6 +46,22 @@ def createRecord(identification, data):
   session.commit()
   session.close()
 
-def getTokenData(token):
+def decodeTokenData(token):
   userData = jwt.decode(token, os.environ.get("SECRET_KEY_TOKEN") ,algorithms=["HS256"])
   return userData
+
+def generateTokenEmail(email):
+  token = jwt.encode(email, os.environ.get("SECRET_KEY_TOKEN") ,algorithm="HS256")
+  return token
+  
+
+def sendEmail(mail, token, recipients):
+  msg = Message("Account activation",
+                sender="juanjosepikon05@gmail.com",
+                recipients=[recipients])
+  msg.html = f"<button><a href= 'http://localhost:5000/confirmation/{token}'> ACTIVATE ACCOUNT </a> <button>"
+  mail.send(msg)
+  # server = SMTP("smtp.gmail.com",587)
+  # server.starttls()
+  # server.login("juanjosepikon05@gmail.com", "clave255")
+  # server.sendmail("juanjosepikon05@gmail.com","juanjosepikon05@gmail.com", "hola")
