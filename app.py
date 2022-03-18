@@ -86,11 +86,12 @@ def login():
 def createDoctorUser():
   if request.method == "POST":
     token = request.headers.get("Authorization")
-    userHospitalData = decodeTokenData(token)
     try:
-      userDoctorData = request.get_json()
+      userHospitalData = decodeTokenData(token)
     except:
       return "TOKEN MISSING"
+    
+    userDoctorData = request.get_json()
     
     if userHospitalData ["userType"].upper() == "HOSPITAL" and not ("" in userDoctorData.values()):
       if not(searchUser(userDoctorData)):
@@ -104,10 +105,9 @@ def createDoctorUser():
 def createObservation (identification):
   if request.method == "POST":
     token = request.headers.get("Authorization")
-    
     try:
       userDoctorData = decodeTokenData(token)
-    except:
+    except: 
       return "TOKEN MISSING"
     
     if userDoctorData ["userType"].upper() == "DOCTOR":

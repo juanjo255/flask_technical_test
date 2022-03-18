@@ -1,4 +1,3 @@
-from http import server
 from models.models import *
 from sqlalchemy import select
 from sqlalchemy.orm import Session
